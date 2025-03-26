@@ -19,7 +19,6 @@ public class Parcel {
     @Enumerated(EnumType.STRING)
     private ParcelStatus status;
     @ManyToOne
-    @JoinColumn(name = "courier_id", nullable = false)
     private Courier courier;
 
 
