@@ -12,7 +12,7 @@ import lombok.ToString;
 public class Parcel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private Long trackingNumber;
     private double weight;
     private String address;

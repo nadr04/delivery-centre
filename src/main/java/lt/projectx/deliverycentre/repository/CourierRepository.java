@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CourierRepository extends JpaRepository<Courier, Long> {
+public interface CourierRepository extends JpaRepository<Courier, Integer> {
     List<Courier> findAllByPersonalCodeContainingIgnoreCase(Long personalCode);
 }

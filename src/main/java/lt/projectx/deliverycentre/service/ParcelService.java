@@ -5,11 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lt.projectx.deliverycentre.entity.Courier;
 import lt.projectx.deliverycentre.entity.Parcel;
 import lt.projectx.deliverycentre.entity.ParcelStatus;
-import lt.projectx.deliverycentre.repository.CourierRepository;
 import lt.projectx.deliverycentre.repository.ParcelRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +35,7 @@ public class ParcelService {
             parcelRepository.save(parcel);
         }
     }
+
     public void printAllParcels() {
         this.getAllParcels().forEach(System.out::println);
     }
@@ -42,7 +43,33 @@ public class ParcelService {
     public List<Parcel> getAllParcels() {
         return parcelRepository.findAll();
     }
-    public List<Parcel> findAllByTrackingNumber(Long trackingNumber) {
-        return parcelRepository.findAllByTrackingNumberContainingIgnoreCase(trackingNumber);
+
+    public Parcel findParcelById(Integer id) {
+        return parcelRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Parcel with id " + id + " not found"));
     }
+
+    public Parcel patchParcelStatusById(Integer id, ParcelStatus newStatus) {
+        Optional<Parcel> maybeParcelFromDb = parcelRepository.findById(id);
+        if (maybeParcelFromDb.isEmpty()) {
+            throw new EntityNotFoundException("Parcel with id " + id + " not found");
+        }
+
+        Parcel parcelFromDb = maybeParcelFromDb.get();
+
+        if (newStatus != null && !newStatus.equals(parcelFromDb.getStatus())) {
+            parcelFromDb.setStatus(newStatus);
+        }
+
+        return parcelRepository.saveAndFlush(parcelFromDb);
+    }
+    public void deleteParcelById(Integer id) {
+        Optional<Parcel> maybeParcelFromDb = parcelRepository.findById(id);
+        if (maybeParcelFromDb.isEmpty()) {
+            throw new EntityNotFoundException("Parcel with id " + id + " not found");
+        }
+        parcelRepository.deleteById(id);
+    }
+
+
 }
