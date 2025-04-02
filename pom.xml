@@ -7,11 +7,11 @@
         <relativePath/>
         <!--  lookup parent from repository  -->
     </parent>
-    <groupId>lt.codeacademy</groupId>
-    <artifactId>employee-task</artifactId>
+    <groupId>lt.projectx</groupId>
+    <artifactId>delivery-centre</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>employee-task</name>
-    <description>employee-task</description>
+    <name>delivery-centre</name>
+    <description>delivery-centre</description>
     <url/>
     <licenses>
         <license/>

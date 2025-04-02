@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CourierRepository extends JpaRepository<Courier, Integer> {
-    List<Courier> findAllByPersonalCodeContainingIgnoreCase(Long personalCode);
+//    List<Courier> findAllByPersonalCode(Long personalCode);
 }

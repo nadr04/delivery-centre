@@ -2,10 +2,11 @@ package lt.projectx.deliverycentre.service;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.projectx.deliverycentre.entity.Courier;
 import lt.projectx.deliverycentre.entity.Parcel;
-import lt.projectx.deliverycentre.entity.ParcelStatus;
 import lt.projectx.deliverycentre.repository.CourierRepository;
 import lt.projectx.deliverycentre.repository.ParcelRepository;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,21 @@ public class CourierService {
         return courierRepository.saveAndFlush(courier);
     }
 
-    public Courier addTestCourier() {
-        Courier courier = new Courier();
-        courier.setName("John");
-        courier.setLastName("Doe");
-        courier.setPersonalCode(123456789L);
-        courier.setVehicleNumber("XYZ-1234");
-        return courierRepository.save(courier);
+    @Transactional
+    public void addTestCouriers() {
+        for (int i = 1; i <= 10; i++) {
+            Courier courier = new Courier();
+            courier.setName("John");
+            courier.setLastName("Doe");
+            courier.setPersonalCode(123456789L);
+            courier.setVehicleNumber("XYZ-1234");
+            if (i % 2 == 0) {
+                Parcel parcel = parcelRepository.findById(i - 1).get();
+                courier.getParcels().add(parcel);
+                parcel.setCourier(courier);
+            }
+            addCourier(courier);
+        }
     }
 
     public void printAllCouriers() {
@@ -40,9 +49,6 @@ public class CourierService {
         return courierRepository.findAll();
     }
 
-    public List<Courier> findAllByPersonalCode(Long personalCode) {
-        return courierRepository.findAllByPersonalCodeContainingIgnoreCase(personalCode);
-    }
     public Courier findCourierById(Integer id) {
         return courierRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Courier with id " + id + " not found"));

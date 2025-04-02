@@ -20,51 +20,39 @@ public class ParcelController {
 
     @PostMapping
     public ResponseEntity<Parcel> addParcel(@RequestBody Parcel parcel) {
-        Parcel createdParcel = parcelService.addParcel(parcel);
-        return ResponseEntity.ok(createdParcel);
+        return ResponseEntity.ok(parcelService.addParcel(parcel));
     }
 
     @GetMapping
     public ResponseEntity<List<Parcel>> getAllParcels() {
-        List<Parcel> parcels = parcelService.getAllParcels();
-        return ResponseEntity.ok(parcels);
+        return ResponseEntity.ok(parcelService.getAllParcels());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Parcel> getParcelById(@PathVariable Integer id) {
-        try {
-            Parcel parcel = parcelService.findParcelById(id);
-            return ResponseEntity.ok(parcel);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(parcelService.findParcelById(id));
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<Parcel> updateParcelStatus(@PathVariable Integer id, @RequestBody Map<String, String> request) {
         String statusString = request.get("status");
         if (statusString == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(null);
         }
 
+        ParcelStatus newStatus;
         try {
-            ParcelStatus newStatus = ParcelStatus.valueOf(statusString.toUpperCase());
-            Parcel updatedParcel = parcelService.patchParcelStatusById(id, newStatus);
-            return ResponseEntity.ok(updatedParcel);
+            newStatus = ParcelStatus.valueOf(statusString.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(null);
         }
+
+        return ResponseEntity.ok(parcelService.patchParcelStatusById(id, newStatus));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteParcelById(@PathVariable Integer id) {
-        try {
-            parcelService.deleteParcelById(id);
-            return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        parcelService.deleteParcelById(id);
+        return ResponseEntity.noContent().build();
     }
 }
